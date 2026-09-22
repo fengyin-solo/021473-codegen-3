@@ -64,6 +64,9 @@
       </div>
     </section>
 
+    <!-- 公告中心 -->
+    <AnnouncementCenter :is-logged-in="isLoggedIn" />
+
     <!-- Features Section -->
     <section class="features">
       <div class="section-header">
@@ -108,8 +111,12 @@
 </template>
 
 <script>
+import AnnouncementCenter from '../components/AnnouncementCenter.vue'
+import { authState } from '../utils/auth'
+
 export default {
   name: 'Home',
+  components: { AnnouncementCenter },
   data() {
     return {
       features: [
@@ -118,6 +125,11 @@ export default {
         { icon: '🏆', title: '精彩赛事', desc: '定期举办各类台球比赛，从业余到专业，让您在竞技中成长', link: '/competitions' },
         { icon: '🛒', title: '装备商城', desc: '正品台球装备一站式购买，从球杆到配件，品质保证', link: '/shop' }
       ]
+    }
+  },
+  computed: {
+    isLoggedIn() {
+      return authState.isLoggedIn
     }
   },
   methods: {

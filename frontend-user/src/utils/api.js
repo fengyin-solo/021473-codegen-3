@@ -178,7 +178,8 @@ async function mockRequest(url, options) {
     '/user/profile': () => mockData.user,
     '/bookings': handleBookings,
     '/orders': handleOrders,
-    '/user/tasks': handleUserTasks
+    '/user/tasks': handleUserTasks,
+    '/announcements': () => mockData.announcements
   }
   
   const handler = mockHandlers[url]
@@ -351,6 +352,60 @@ const mockData = {
   bookings: [
     { id: 1, orderNo: 'BK20260001', tableName: '3号球桌 - 美式九球', date: '2026-02-15', time: '14:00 - 16:00', status: 'upcoming' },
     { id: 2, orderNo: 'BK20260002', tableName: '1号球桌 - 斯诺克', date: '2026-02-10', time: '19:00 - 21:00', status: 'completed' }
+  ],
+
+  // 公告列表（重要通知 / 活动消息）
+  announcements: [
+    {
+      id: 1,
+      title: '国庆期间营业时间调整通知',
+      content: '尊敬的会员：国庆假期（10月1日 - 10月7日）期间，俱乐部营业时间调整为 09:00 - 23:00，10月8日起恢复正常营业（08:00 - 次日01:00）。请合理安排您的练球与预约时间，祝您假期愉快！',
+      category: 'notice',
+      important: true,
+      pinned: true,
+      createdAt: '2026-09-20 10:00',
+      updatedAt: '2026-09-20 10:00'
+    },
+    {
+      id: 2,
+      title: '秋季会员双打赛火热报名中',
+      content: '秋季会员双打赛将于 10月18日 在主馆A区开赛，两人组队即可报名，会员报名费享 8 折优惠。冠军队伍可获得价值 2000 元的储值卡与定制球杆，名额有限，先到先得！',
+      category: 'activity',
+      important: true,
+      pinned: false,
+      createdAt: '2026-09-18 14:30',
+      updatedAt: '2026-09-18 14:30'
+    },
+    {
+      id: 3,
+      title: '系统维护公告',
+      content: '俱乐部将于 9月25日 凌晨 02:00 - 04:00 进行系统升级维护，期间线上预约与支付功能将暂停服务，给您带来不便敬请谅解。',
+      category: 'notice',
+      important: false,
+      pinned: false,
+      createdAt: '2026-09-15 09:00',
+      updatedAt: '2026-09-16 11:00'
+    },
+    {
+      id: 4,
+      title: '老带新有礼：邀请好友同享会员权益',
+      content: '9月1日至9月30日，老会员邀请新好友注册并到店消费，双方均可获得 2 小时免费台费券，多邀多得，上不封顶。详情请咨询前台或会员顾问。',
+      category: 'activity',
+      important: false,
+      pinned: false,
+      createdAt: '2026-09-10 16:00',
+      updatedAt: '2026-09-10 16:00'
+    },
+    {
+      id: 5,
+      title: '新到一批赛事专用球杆，欢迎体验',
+      content: '商城与器材区已上新一批国际赛事同款球杆与巧粉，会员到店试打可享专属折扣，数量有限，售完即止。',
+      category: 'activity',
+      important: false,
+      pinned: false,
+      createdAt: '2026-09-08 11:20',
+      updatedAt: '2026-09-08 11:20'
+    }
   ]
 }
 
@@ -498,7 +553,15 @@ export const api = {
   doTaskAction: (data) => request('/user/tasks', {
     method: 'POST',
     body: JSON.stringify(data)
-  })
+  }),
+
+  // ========== 公告中心模块 ==========
+
+  /**
+   * 获取公告列表
+   * 包含重要通知（notice）与活动消息（activity）
+   */
+  getAnnouncements: () => request('/announcements')
 }
 
 export default api
