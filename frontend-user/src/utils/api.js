@@ -34,6 +34,13 @@ const taskStore = ts
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 /**
+ * 生成 N 天前的 ISO 时间字符串（用于模拟数据的发布时间）
+ * @param {number} days - 距今天数
+ * @returns {string} ISO 格式时间
+ */
+const daysAgoISO = (days) => new Date(Date.now() - days * 86400000).toISOString()
+
+/**
  * 日志记录器
  * 根据配置的日志级别输出不同级别的日志
  * 
@@ -171,6 +178,7 @@ async function mockRequest(url, options) {
   const mockHandlers = {
     '/auth/login': handleLogin,
     '/auth/logout': handleLogout,
+    '/announcements': () => mockData.announcements,
     '/tables': () => mockData.tables,
     '/courses': () => mockData.courses,
     '/competitions': () => mockData.competitions,
@@ -305,6 +313,70 @@ function handleUserTasks(options) {
  * 包含所有业务模块的测试数据
  */
 const mockData = {
+  // 公告列表（revision 为内容修订版本，内容更新后 +1，已读状态随之失效）
+  announcements: [
+    {
+      id: 'A2026001',
+      category: 'notice',
+      title: '国庆期间营业时间调整通知',
+      summary: '10月1日至10月7日俱乐部延长营业至凌晨2点，请合理安排练球时间。',
+      content: '尊敬的各位会员：\n为迎接国庆假期，俱乐部将于 10月1日（周四）至10月7日（周三）调整营业时间为 09:00 - 次日 02:00。\n假期为预约高峰时段，建议提前 1-2 天通过「球桌预约」页面锁定心仪球桌。\n给您带来的不便敬请谅解，祝您假期愉快，球技大涨！',
+      publishTime: daysAgoISO(1),
+      pinned: true,
+      revision: 1
+    },
+    {
+      id: 'A2026002',
+      category: 'activity',
+      title: '秋季会员双打赛开启报名',
+      summary: '两人组队、自由搭配，报名即送 2 小时畅打卡，冠军队伍可获限量球杆。',
+      content: '秋季会员双打赛即日起开放报名！\n• 报名时间：即日起至 9月28日\n• 比赛时间：10月10日 14:00\n• 参赛方式：两人组队报名，可跨会员等级搭配\n• 比赛奖励：冠军获 LP 限量球杆 ×2，亚军获 500 积分，所有参赛者均可获得 2 小时畅打卡\n名额有限，先到先得，前往「赛事活动」页面立即报名。',
+      publishTime: daysAgoISO(2),
+      pinned: true,
+      revision: 1
+    },
+    {
+      id: 'A2026003',
+      category: 'notice',
+      title: '主馆 A 区斯诺克球桌维护完成',
+      summary: '1-4 号斯诺克球桌台呢已全部更换，现已恢复正常开放预约。',
+      content: '主馆 A 区 1-4 号斯诺克球桌台呢更换与库边校准工作已全部完成，现已恢复正常开放。\n新台呢采用比赛级 6811 台呢，击球手感更顺滑，欢迎各位球友预约体验。\n维护期间给您带来的不便，我们深表歉意。',
+      publishTime: daysAgoISO(4),
+      pinned: false,
+      revision: 1
+    },
+    {
+      id: 'A2026004',
+      category: 'activity',
+      title: '新会员专享：首充加赠 20% 积分',
+      summary: '活动期内新注册会员首次充值满 500 元，即可获赠额外 20% 积分奖励。',
+      content: '新会员福利来了！\n活动期间，新注册会员完成首次充值即可享受：\n• 充 500 元 加赠 100 积分\n• 充 1000 元 加赠 250 积分\n• 充 2000 元 加赠 600 积分\n积分可用于抵扣球桌费用、课程报名及商城购物。\n活动截止日期：2026年10月31日。',
+      publishTime: daysAgoISO(6),
+      pinned: false,
+      revision: 1
+    },
+    {
+      id: 'A2026005',
+      category: 'system',
+      title: '预约系统升级：支持提前 7 天预约',
+      summary: '球桌预约最长提前时间由 3 天延长至 7 天，并新增预约到期短信提醒。',
+      content: '为提升预约体验，系统已完成新一轮升级：\n1. 球桌预约最长提前时间由 3 天延长至 7 天；\n2. 预约开始前 1 小时自动发送短信提醒；\n3. 个人中心「我的预约」支持按日期筛选；\n4. 修复部分时段价格展示不准确的问题。\n如在使用中遇到问题，欢迎通过个人中心「反馈」告知我们。',
+      publishTime: daysAgoISO(9),
+      pinned: false,
+      revision: 1
+    },
+    {
+      id: 'A2026006',
+      category: 'system',
+      title: '商城物流查询功能上线',
+      summary: '已发货订单可在任务中心实时查看物流轨迹，签收状态自动同步。',
+      content: '商城物流查询功能正式上线：\n• 已发货订单可在「任务中心」点击「查看物流」实时跟踪包裹位置；\n• 包裹签收后订单状态将自动更新为已完成；\n• 历史订单物流信息同步保留 90 天。\n感谢您一直以来的支持。',
+      publishTime: daysAgoISO(14),
+      pinned: false,
+      revision: 1
+    }
+  ],
+
   // 用户信息
   user: {
     id: 'U20260001',
@@ -378,7 +450,17 @@ export const api = {
    * 用户退出登录
    */
   logout: () => request('/auth/logout', { method: 'POST' }),
-  
+
+  // ========== 公告模块 ==========
+
+  /**
+   * 获取公告列表（重要通知 / 活动消息 / 系统更新）
+   * @param {Object} params - 查询参数
+   * @param {string} params.category - 公告类别 notice/activity/system
+   * @param {string} params.keyword - 搜索关键词
+   */
+  getAnnouncements: (params) => request('/announcements', { params }),
+
   // ========== 球桌模块 ==========
   
   /**

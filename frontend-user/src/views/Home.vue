@@ -64,6 +64,9 @@
       </div>
     </section>
 
+    <!-- Announcement Center -->
+    <AnnouncementCenter />
+
     <!-- Features Section -->
     <section class="features">
       <div class="section-header">
@@ -108,8 +111,11 @@
 </template>
 
 <script>
+import AnnouncementCenter from '../components/AnnouncementCenter.vue'
+
 export default {
   name: 'Home',
+  components: { AnnouncementCenter },
   data() {
     return {
       features: [
